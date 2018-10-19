@@ -3,20 +3,12 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo Installing Mocha...
-      - npm install -g mocha
+      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay&
+      - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
   pre_build:
     commands:
-      - echo Installing source NPM dependencies...
-      - npm install unit.js
+      - docker build -t helloworld .
   build:
     commands:
-      - echo Build started on `date`
-      - echo Compiling the Node.js code
-      - mocha HelloWorld.js
-  post_build:
-    commands:
-      - echo Build completed on `date`
-artifacts:
-  files:
-    - HelloWorld.js
+      - docker images
+      - docker run helloworld echo "Hello, World!" 

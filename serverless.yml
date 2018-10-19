@@ -5,7 +5,6 @@ custom:
 
 provider:
   name: aws
-  profile: aws-cartoon-nonprod:aws-cartoon-nonprod-devops
   runtime: nodejs8.10
   timeout: 30
   iamRoleStatements:

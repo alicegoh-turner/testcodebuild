@@ -12,4 +12,4 @@ phases:
       - serverless deploy --stage cicd | tee deploy.out
   post_build:
     commands:
-      - serverless invoke local --function exportreport | tee test.out 
+      - serverless-offline invoke local --function exportreport | tee test.out 

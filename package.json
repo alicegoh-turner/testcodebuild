@@ -1,0 +1,32 @@
+{
+  "name": "cartoon-appfigures",
+  "version": "1.0.0",
+  "description": "Export report from AppFigures uisng their APIs",
+  "main": "handler.js",
+  "scripts": {
+    "test": "Click test button from Lmabda function"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turnercode/cartoon-appfigures.git"
+  },
+  "keywords": [
+    "report",
+    "appfigures"
+  ],
+  "author": "Alice Goh",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/turnercode/cartoon-appfigures/issues"
+  },
+  "homepage": "https://github.com/turnercode/cartoon-appfigures#readme",
+  "dependencies": {
+    "aws-sdk": "2.333.0",
+    "debug": "^4.1.0",
+    "moment": "2.22.2"
+  },
+  "devDependencies": {
+    "serverless": "1.32.0",
+    "serverless-offline": "3.27.0"
+  }
+}

@@ -1,0 +1,15 @@
+on: 0.1
+phases:
+  install:
+    commands:
+      - npm install
+      - npm install -g mocha
+      - npm install -g serverless
+      - npm install -g serverless-offline
+       
+  build:
+    commands:
+      - serverless deploy --stage cicd | tee deploy.out
+  post_build:
+    commands:
+      - serverless invoke local --function exportreport | tee test.out 

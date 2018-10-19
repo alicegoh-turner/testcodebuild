@@ -1,0 +1,69 @@
+service: cartoon-appfigures-cicd
+
+custom:
+  UniversalResourceName: ${self:service}-${opt:stage, self:provider.stage}
+
+provider:
+  name: aws
+  profile: aws-cartoon-nonprod:aws-cartoon-nonprod-devops
+  runtime: nodejs8.10
+  timeout: 30
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - s3:PutObject
+      Resource: "arn:aws:s3:::${self:provider.environment.BUCKET}/*"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+  environment:
+    BUCKET: 'unity-stats-nonprod'
+    DYNAMODB_TABLE: ${self:custom.UniversalResourceName}
+    APPNAME: 'AppFigures'
+    APPFIGURESHOST: 'api.appfigures.com'
+    APPFIGURESAPIVERSION: 'v2'
+    APPFIGURESAPIURL: 'https://api.appfigures.com/v2'
+    CLIENTKEY: ${file(secrets.yml):clientKey}
+    CLIENTSECRET: ${file(secrets.yml):clientSecret}
+    OAUTHTOKEN: ${file(secrets.yml):oAuthToken}
+    OAUTHSECRET: ${file(secrets.yml):oAuthSecret}
+    USEREMAIL: ${file(secrets.yml):userEmail}
+    OAUTHSIGNATUREMETHOD: 'PLAINTEXT'
+
+resources:
+  Resources:
+    ## Specifying DynamoDB Table
+    ReportDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: reportType
+            AttributeType: S
+          - AttributeName: reportDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: reportType
+            KeyType: HASH
+          - AttributeName: reportDate
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+
+functions:
+  exportreport:
+    handler: handler.exportreport
+    timeout: 300
+    events:
+      - schedule: cron(0 7 * * ? *)
+
+plugins:
+  - serverless-offline
